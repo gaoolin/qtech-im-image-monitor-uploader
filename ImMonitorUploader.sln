@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.35706.149
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImMonitorUploader", "ImMonitorUploader\ImMonitorUploader.csproj", "{F1744FC1-0E54-4F52-B878-6AC53E891E0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImMonitorUploader", "ImMonitorUploader.csproj", "{F1744FC1-0E54-4F52-B878-6AC53E891E0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
