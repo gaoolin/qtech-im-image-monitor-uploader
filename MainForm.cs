@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using Serilog;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,6 +14,8 @@ namespace ImMonitorUploader
         // 静态属性，用于在其他地方访问 MainForm 实例
         public static MainForm Instance { get; private set; }
 
+        // 用于心跳检测的定时器
+        private HeartbeatService heartbeatService;
 
 
         public MainForm()
@@ -56,13 +54,26 @@ namespace ImMonitorUploader
             this.FormClosing += MainForm_FormClosing;
 
             // 启动文件监控逻辑
-            this.Load += (s, e) =>
+            heartbeatService = new HeartbeatService(); // 初始化心跳服务
+            this.Load += async (s, e) =>
             {
                 // 启动文件监控逻辑
                 ImagesMonitor.Start();
-            };
 
-            Logger.Log("画胶图像采集程序已启动！");
+                // 延时3秒后启动心跳检测，避免启动初期网络问题
+                await Task.Delay(3000);
+                heartbeatService.Start(); // 启动心跳
+            };
+            this.FormClosing += (s, e) => heartbeatService.Stop(); // 关闭时停止心跳
+
+            // 在 MainForm 构造函数中（在 InitializeComponent() 之后）添加：
+            ContextMenuStrip richTextBoxContextMenu = new ContextMenuStrip();
+            ToolStripMenuItem clearLogsMenuItem = new ToolStripMenuItem("清空日志");
+            clearLogsMenuItem.Click += (s, e) => { richTextBoxLog.Clear(); };
+            richTextBoxContextMenu.Items.Add(clearLogsMenuItem);
+            richTextBoxLog.ContextMenuStrip = richTextBoxContextMenu;
+
+            Log.Information("画胶图像采集程序已启动！");
         }
 
 
@@ -104,21 +115,7 @@ namespace ImMonitorUploader
 
         }
 
-        // 追加日志到 RichTextBox 的方法
-        public void AppendLog(string message)
-        {
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new Action<string>(AppendLog), message);
-            }
-            else
-            {
-                // 将时间戳和消息追加到日志框中
-                richTextBoxLog.AppendText($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
-                richTextBoxLog.ScrollToCaret();
-            }
-        }
-
         // 如果需要在窗体中添加其他初始化工作（例如监控逻辑），可以在这里添加
+
     }
 }

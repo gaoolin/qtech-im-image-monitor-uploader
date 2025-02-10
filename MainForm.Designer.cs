@@ -58,7 +58,7 @@ namespace ImMonitorUploader
 
         #endregion
 
-        private RichTextBox richTextBoxLog;
+        public RichTextBox richTextBoxLog;
     }
 }
 
